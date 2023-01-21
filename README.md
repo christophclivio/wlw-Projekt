@@ -24,5 +24,19 @@ Um die I2C-Schnittstelle verwenden zu koennen, wurde diese hinzugefuegt:
 
  	
 Um die Funktion zu testen wurde ein i2c Programm gestartet, welches im 
+Ordner i2c zu fineden ist. Dies funktionierte nur teilweise, da es Probleme mit
+der Security Policy gab. Es wurde mittels verschiednen Herangehensweisen wie Helmet
+oder setHeader versucht dies zu lösen. Jedoch funktionierte es nie einwandfrei.
 
-Ordner i2c zu fineden ist.
+/*******************************************
+/ Raspi Server
+/*******************************************
+In dem Ordner Server ist die Abgabe für das wlw-Projekt zu finden.
+Dies beinhaltet:
+	- server.js
+	- index.html
+	- main.js
+	- style.css
+	
+Die aufgelistetetn FIles, ermöglichen eine AUswertung einer Batteriezelle mittels
+zwei ADC's und zeigen deren Werte auf einer Webseite an.
