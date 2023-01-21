@@ -1,0 +1,210 @@
+<html>
+<head>
+    <link rel="stylesheet" href="./style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    <script src="./main.js"></script>
+  <title>Small Lithium Storage Analyzer</title>
+</head>
+<body>
+  <nav>
+    <ul>
+      <li><a href="#home">Home</a></li>
+      <li><a href="#aufbau">Aufbau</a></li>
+      <li><a href="#zelle">Zelle</a></li>
+      <li><a href="#adc">ADC</a></li>
+      <li><a href="#batterie">Batterie</a></li>
+    </ul>
+  </nav>
+
+
+  <main>
+    <div class="page">
+    <h2>wlw Projekt</h2>
+    <div class="content_container">
+      <a id="home"></a>  
+        <p>Auf dieser Webseite soll mittels dem Raspberry Pi ein Batteriezellenpaket ausgemessen und analysiert werden.
+        Dazu werden mittels zwei Analog zu digital Wandlern die Spannungen ausgemessen und mittels I2C-Schnittestelle an das Raspi weitergegeben.
+        Der Aufbau der Batterie wie auch die Zusammenschaltung ist in dem folgenden Kapitel aufgeführt. Weiterführend werden alle Zellspannungen mit
+        den Werten in einem Graphen dargestellt und aufgezeichnet. Und zuletzt wird mittels den erhaltenen Werten eine Abschätzung des SoC (State of Charge)
+        des Batteriepakets dargestellt.
+      </p>
+    </div>
+    <div class="content_container">
+      <a id="zelle"></a>
+          <h2>Zelle</h2>
+          <p>In diesem Abschnitt wird die einzelne Zelle genauer betrachtet.
+          <a href="https://www.tme.eu/Document/3fd1761554908934cf882cd34a0349ee/38120-15A.pdf" target="_blank">[Datenblatt]</a>
+          In der unten aufgeführten Tabelle sind die wichtigsten Eigenschaften der Zellen aufgeführt.
+          </p>
+          <h3>Eckdaten aus dem Datenblatt:</h3>
+          <table class="center_table">
+              <tbody>
+                <tr>
+                  <td>Ladeendspannunng:</td>
+                  <td>3.2 V</td>
+                </tr>
+                <tr>
+                  <td>Entladeschlussspannung:</td>
+                  <td>2-2,5 V</td>
+                </tr>
+                <tr>
+                  <td>Kapazität:</td>
+                  <td>15000 mAh</td>
+                </tr>
+                <tr>
+                  <td>Max. Ladestrom:</td>
+                  <td>2C (30 A)</td>
+                </tr>
+                <tr>
+                  <td>Norm. Ladestrom;</td>
+                  <td>1C (15 A)</td>
+                </tr>
+              </tbody>
+              </table>
+      </div>
+    <div class="content_container">
+      <a id="aufbau"></a>  
+        <h2>Aufbau</h2>
+        <p>In diesem Abschnitt wird der Aufbau der Batteriezellen genauer betrachtet.
+        </p>
+        <p>Die im Projekt Verwendete Batteriezelle besteht aus 8 Lithium-Eisenphosphat Rundzellen des Herstellers HeadWay.
+            Diese Zellen wurden wie Anschliessend ersichtlich zu einer Batteriezelle zusammengeschaltet:
+        </p>
+        <img src="./Images/Batteriezelle_Aufbau.jpeg"alt="Aufbau Batteriezelle" class="center_image">
+        <p> Die Daraus Folgende Zelle hat eine Leerlaufspannung von 6.4 Volt und eine Kapazität von 120 Ah. 
+            Somit ist die Zelle Ideal für den Langfristigen betrieb von Geräten die eine Nennspannung von 5 Volt haben.
+        </p>
+    </div>
+      <div class="content_container">
+        <a id="adc"></a>   
+          <h2>ADC</h2>
+          <p>In diesem Abschnitt wird der Analog-Digital-Wandler genauer betrachtet.
+          <a href="https://cdn-reichelt.de/documents/datenblatt/A300/COM-KY053ADC-DATENBLATT.pdf" target="_blank">Datenblatt</a>
+          </p>
+          <h3>Eckdaten aus dem Datenblatt:</h3>
+          <table class="center_table">
+              <tbody>
+                <tr>
+                  <td>Schnittstelle:</td>
+                  <td>I2C</td>
+                </tr>
+                <tr>
+                  <td>Eingänge:</td>
+                  <td>4</td>
+                </tr>
+                <tr>
+                  <td>Bit-Rate:</td>
+                  <td>16 Bit</td>
+                </tr>
+                <tr>
+                  <td>Eingangsspannung:</td>
+                  <td>2.0-5.5 V</td>
+                </tr>
+                <tr>
+                  <td>Stromverbrauch:</td>
+                  <td>150 uA</td>
+                </tr>
+              </tbody>
+              </table>
+
+            <p>Um alle Zellspannungen auszulesen, werden somit mindestens zwei ADC's benötigt, wobei +,- und die jeweiligen Zwischenspannungen zu messen. 
+              Daraus können später alle Zellspannungen berechnet werden.</p>
+
+                <h3>Analogwerte</h3>      
+                <table class="chart-table">
+                  <tr>
+                      <div class="chart-row">
+                        <div class="chart-cell">
+                          <!-- Chart 0 -->
+                          <canvas id="adc-chart1"></canvas>
+                          <div class="chart-button-container">
+                            <button id="reset-button">Reset Chart 1</button>
+                          </div>
+                          
+                        </div>
+                        <div class="chart-cell">
+                          <!-- Chart 1 -->
+                          <canvas id="adc-chart2"></canvas>
+                          <div class="chart-button-container">
+                            <button id="reset-button">Reset Chart 2</button>
+                          </div>
+                        </div>
+                      </div>
+                  </tr>
+                  <tr>
+                    <div class="chart-row">
+                      <div class="chart-cell">
+                        <!-- Chart 2 -->
+                        <canvas id="adc-chart3"></canvas>
+                        <div class="chart-button-container">
+                          <button id="reset-button">Reset Chart 3</button>
+                        </div>
+                        
+                      </div>
+                      <div class="chart-cell">
+                        <!-- Chart 3 -->
+                        <canvas id="adc-chart4"></canvas>
+                        <div class="chart-button-container">
+                          <button id="reset-button">Reset Chart 4</button>
+                        </div>
+                      </div>
+                    </div>
+                  </tr>
+                  <tr>
+                    <div class="chart-row">
+                      <div class="chart-cell">
+                        <!-- Chart 4 -->
+                        <canvas id="adc-chart5"></canvas>
+                        <div class="chart-button-container">
+                          <button id="reset-button">Reset Chart 5</button>
+                        </div>
+                        
+                      </div>
+                      <div class="chart-cell">
+                        <!-- Chart 5 -->
+                        <canvas id="adc-chart6"></canvas>
+                        <div class="chart-button-container">
+                          <button id="reset-button">Reset Chart 6</button>
+                        </div>
+                      </div>
+                    </div>
+                  </tr>
+                  <tr>
+                    <div class="chart-row">
+                      <div class="chart-cell">
+                        <!-- Chart 6 -->
+                        <canvas id="adc-chart7"></canvas>
+                        <div class="chart-button-container">
+                          <button id="reset-button">Reset Chart 7</button>
+                        </div>
+                        
+                      </div>
+                      <div class="chart-cell">
+                        <!-- Chart 7 -->
+                        <canvas id="adc-chart8"></canvas>
+                        <div class="chart-button-container">
+                          <button id="reset-button">Reset Chart 8</button>
+                        </div>
+                      </div>
+                    </div>
+                  </tr>
+                </table>
+      </div>
+
+      <div class="content_container">
+        <a id="batterie"></a>  
+          <h2>Ladezustand Batterie</h2>
+          <p>In diesem Abschnitt wird eine grobe Abschätzung des SoC (State of Charge) gemacht. Es handelt sich lediglich um eine 
+            Abschätzung, da für eine genaue Bestimmung des SoC mehr Messungen benötigt werden, wie der Strom.
+          </p>
+          <div class ="batterie-aussen">
+              <div class ="batterie-level">  
+            </div>
+          </div>         
+      </div> 
+    </div>
+  </div>
+</main>
+
+</body>
+</html>
